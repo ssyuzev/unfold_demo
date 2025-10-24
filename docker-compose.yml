@@ -12,7 +12,7 @@ services:
   app:
     build: .
     container_name: "app"
-    command: gunicorn core.wsgi:application -w 1 --bind 0.0.0.0:8000 --timeout 600 --log-level debug
+    command: gunicorn DjangoProject.wsgi:application -w 1 --bind 0.0.0.0:8000 --timeout 600 --log-level debug
     volumes:
       - .:/app
     ports:
