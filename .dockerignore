@@ -1,0 +1,8 @@
+.venv
+.git
+.env.example
+.idea
+__pycache__/
+*.pyc
+.vscode/
+node_modules/

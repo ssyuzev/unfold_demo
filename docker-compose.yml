@@ -1,0 +1,43 @@
+services:
+  cloudflared:
+    image: cloudflare/cloudflared
+    container_name: cloudflared
+    environment:
+      - TZ=Europe/Kyiv
+      - TUNNEL_TOKEN=${TOKEN}
+    restart: unless-stopped
+    command: tunnel --no-autoupdate run
+    networks:
+      - app-network
+  app:
+    build: .
+    container_name: "app"
+    command: gunicorn core.wsgi:application -w 1 --bind 0.0.0.0:8000 --timeout 600 --log-level debug
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    networks:
+      - app-network
+  nginx:
+    build: ./nginx
+    restart: always
+    volumes:
+      - $PWD/static:/app/static:ro
+      - $PWD/media:/app/media
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - app
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    name: app-network
+    driver: bridge
+
+volumes:
+  caddy_data:
+  caddy_config:
